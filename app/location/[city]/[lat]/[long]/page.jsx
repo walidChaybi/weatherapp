@@ -1,6 +1,8 @@
 "use client"
 
 import CalloutCard from "@/components/CalloutCard"
+import InfoPanel from "@/components/InfoPanel"
+import StateCard from "@/components/StateCard"
 import { useEffect, useState } from "react"
 
 function WeatherPage({ params: { city, lat, long } }) {
@@ -20,24 +22,67 @@ function WeatherPage({ params: { city, lat, long } }) {
 
   console.log(data)
   return (
-    <div>
-      {/*<InfoPanel /> */}
-      <div>
-        <div className="p-5">
-          <div className="pb-5">
-            <h2 className="text-xl font-bold">Today's Overview</h2>
-            {data && (
+    data && (
+      <div className="flex flex-col min-h-screen md:flex-row">
+        <InfoPanel city={city} lat={lat} long={long} data={data} />
+        <div className="flex-1 p-5 lg:p-10">
+          <div className="p-5">
+            <div className="pb-5">
+              <h2 className="text-xl font-bold">Today's Overview</h2>
+
               <p className="text-sm text-gray-400">
                 Last Updated at : {data.current_weather.time} {data.timezone}
               </p>
-            )}
+            </div>
+            <div className="m-2 mb-10">
+              <CalloutCard message="this is where GPT 4 summary" />
+            </div>
           </div>
-          <div>
-            <CalloutCard message="this is where GPT 4 summary" warning />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 m-2">
+            <StateCard
+              title="Maximum Temperature"
+              metric={`${data.daily.temperature_2m_max[0]} °C`}
+              color="yellow"
+            />
+
+            <StateCard
+              title="Minimum Temperature"
+              metric={`${data.daily.temperature_2m_min[0]} °C`}
+              color="green"
+            />
+            <div>
+              <StateCard
+                title="UV Index"
+                metric={`${data.daily.uv_index_max[0]} `}
+                color="rose"
+              />
+              {Number(data.daily.uv_index_max[0]) > 5 && (
+                <CalloutCard message="Uv too high, be aware" warning />
+              )}
+            </div>
+
+            <div className="flex space-x-3">
+              <StateCard
+                title="Wind Speed"
+                metric={`${data.current_weather.windspeed} m/s`}
+                color="blue"
+              />
+              <StateCard
+                title="Wind Direction"
+                metric={`${data.current_weather.winddirection}°`}
+                color="violet"
+              />
+            </div>
+          </div>
+          <hr className="mb-5" />
+          <div className="space-y-3">
+            {/*TempChart */}
+            {/*TempChart */}
+            {/*TempChart */}
           </div>
         </div>
       </div>
-    </div>
+    )
   )
 }
 
