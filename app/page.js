@@ -1,6 +1,7 @@
 "use client"
 
 import CityPicker from "@/components/CityPicker"
+import Footer from "@/components/footer/Footer"
 import { Card, Divider, Subtitle, Text } from "@tremor/react"
 
 export default function Home() {

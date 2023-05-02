@@ -2,9 +2,12 @@
 
 import CalloutCard from "@/components/CalloutCard"
 import InfoPanel from "@/components/InfoPanel"
+import RainChart from "@/components/RainChart"
 import StateCard from "@/components/StateCard"
+import TempChart from "@/components/TempChart"
 import { useEffect, useState } from "react"
-
+import getBasePath from "../../../../../util/getBasePath"
+import cleanData from "../../../../../util/cleanData"
 function WeatherPage({ params: { city, lat, long } }) {
   const [data, setData] = useState()
 
@@ -15,12 +18,46 @@ function WeatherPage({ params: { city, lat, long } }) {
       )
       const res = await weatherData.json()
       setData(res)
-      console.log(res.current_weather.time)
     }
     fetchdata()
   }, [])
+  useEffect(() => {
+    if (data) {
+      const {
+        current_weather,
+        timezone,
+        hourly,
+        hourly_units,
+        timezone_abbreviation,
+      } = data
 
-  console.log(data)
+      const handleGPT = () => {
+        const res = fetch(`${getBasePath()}/api/getWeatherCummary`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            weatherData: {
+              current_weather,
+              timezone,
+              hourly,
+              hourly_units,
+              timezone_abbreviation,
+            },
+          }),
+        })
+          .then((res) => res.json)
+          .then((res) => GPTdata)
+
+        const { content } = res
+        return content
+      }
+      const content = handleGPT()
+      console.log(content)
+    }
+  }, [data])
+
   return (
     data && (
       <div className="flex flex-col min-h-screen md:flex-row">
@@ -35,7 +72,7 @@ function WeatherPage({ params: { city, lat, long } }) {
               </p>
             </div>
             <div className="m-2 mb-10">
-              <CalloutCard message="this is where GPT 4 summary" />
+              <CalloutCard message="Chat GPT summary" />
             </div>
           </div>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 m-2">
@@ -76,7 +113,8 @@ function WeatherPage({ params: { city, lat, long } }) {
           </div>
           <hr className="mb-5" />
           <div className="space-y-3">
-            {/*TempChart */}
+            <TempChart data={data} />
+            <RainChart data={data} />
             {/*TempChart */}
             {/*TempChart */}
           </div>
