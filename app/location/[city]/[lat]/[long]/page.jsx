@@ -6,8 +6,8 @@ import RainChart from "@/components/RainChart"
 import StateCard from "@/components/StateCard"
 import TempChart from "@/components/TempChart"
 import { useEffect, useState } from "react"
-import getBasePath from "../../../../../util/getBasePath"
-import cleanData from "../../../../../util/cleanData"
+//import getBasePath from "../../../../../util/getBasePath"
+//import cleanData from "../../../../../util/cleanData"
 function WeatherPage({ params: { city, lat, long } }) {
   const [data, setData] = useState()
 
@@ -21,42 +21,6 @@ function WeatherPage({ params: { city, lat, long } }) {
     }
     fetchdata()
   }, [])
-  useEffect(() => {
-    if (data) {
-      const {
-        current_weather,
-        timezone,
-        hourly,
-        hourly_units,
-        timezone_abbreviation,
-      } = data
-
-      const handleGPT = () => {
-        const res = fetch(`${getBasePath()}/api/getWeatherCummary`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            weatherData: {
-              current_weather,
-              timezone,
-              hourly,
-              hourly_units,
-              timezone_abbreviation,
-            },
-          }),
-        })
-          .then((res) => res.json)
-          .then((res) => GPTdata)
-
-        const { content } = res
-        return content
-      }
-      const content = handleGPT()
-      console.log(content)
-    }
-  }, [data])
 
   return (
     data && (
